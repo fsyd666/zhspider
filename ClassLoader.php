@@ -11,7 +11,7 @@ class ClassLoader {
     public static function autoload($class) {
 
         $class = str_replace('\\', '/', $class);
-        $file = __DIR__ . DIRECTORY_SEPARATOR . $class . '.php';
+        $file = __DIR__ . '/src/' . $class . '.php';
         if (file_exists($file)) {
             require $file;
         }

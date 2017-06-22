@@ -19,7 +19,10 @@ class Engine extends Base {
     public function run() {
 
         $url = $this->config['run_url'];
-
+        if (!$url) {
+            echo 'no run url!';
+            exit;
+        }
         $this->queue = new Queue();
         $this->queue->in($url);
         $this->handle = $this->createHandle();
