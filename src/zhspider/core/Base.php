@@ -10,16 +10,22 @@ namespace zhspider\core;
 
 class Base {
 
-    private $_config = array();
-    protected $curUrl = null;
-    protected $domain = null;
-
-    protected function __get($name) {
-        return $this->_config;
-    }
+    private $_config = null;
 
     public function __construct() {
-        $this->_config = require __DIR__ . '/../config/config.php';
+        $this->_config = Config::getInstance();
+    }
+
+    public function __get($name) {
+        if ($name == 'config') {
+            return $this->_config;
+        }
+        return null;
+    }
+
+    protected function log($message) {
+        $filename = '../logs/' . date('Y-m-d') . '.log';
+        file_put_contents($filename, date('H:i:s') . "\t" . $message . "\t" . $this->curUrl . "\n", FILE_APPEND);
     }
 
 }

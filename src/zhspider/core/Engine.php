@@ -13,34 +13,33 @@ use zhspider\handle\Handle;
 
 class Engine extends Base {
 
-    protected $queue = null;
-    protected $handle = null;
+    protected $queue = null;  //队列对象
+    protected $handle = null; //处理器对象
 
     public function run() {
-
-        $url = $this->config['run_url'];
-        if (!$url) {
-            echo 'no run url!';
-            exit;
-        }
         $this->queue = new Queue();
-        $this->queue->in($url);
+        $this->queue->in($this->config->get('run_url'));
         $this->handle = $this->createHandle();
         $this->start();
     }
 
     protected function start() {
         while ($url = $this->queue->out()) {  //取出一个地址
-            $html = Request::get($url);
+            $request = new Request();
+            $html = $request->get($url, $this->config->get('request')['header']);
             //获取新的地址
-            $urls = $this->handle->getUrls($html);
+            if (!$html) { //没有数据跳过
+                continue;
+            }
+            $urls = $this->handle->getUrls($html, $this->config->curUrl);
             $this->queue->in($urls);
+            //file_put_contents('a.txt', implode("\n", $this->queue->getWorkedData()) . "\n", FILE_APPEND);
         }
     }
 
     protected function createHandle() {
-        if ($this->config['handle']) {
-            $class = $this->config['handle'];
+        if ($this->config->get('handle')) {
+            $class = 'zhspider\\handle\\' . $this->config->get('handle');
             return new $class();
         } else {
             return new Handle();

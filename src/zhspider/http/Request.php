@@ -13,17 +13,22 @@ use zhspider\core\Base;
 class Request extends Base {
 
     //curl获取文件
-    public static function get($url, $headers = array()) {
+    public function get($url, $headers = array()) {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers ? $headers : $this->config['request']['header']);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $response = curl_exec($ch);
         if (curl_errno($ch) > 0) {
-            throw new \Exception(curl_error($ch));
+            $this->log(curl_error($ch));
+            return false;
         }
         curl_close($ch);
+        if (!$response) {
+            $this->log('没有数据!');
+            return false;
+        }
         return $response;
     }
 

@@ -16,7 +16,7 @@ class Queue extends Base {
 
     public function in($urls) {
         if (empty($urls)) {
-            return;
+            return false;
         }
         if (is_array($urls)) {
             foreach ($urls as $v) {
@@ -31,30 +31,28 @@ class Queue extends Base {
         if (empty($url)) {
             return false;
         }
-        if (strpos($url, 'javascript:') !== false) { //非地址跳过
+        if (stripos($url, 'javascript:') !== false) { //非地址跳过
             return false;
         }
         //去除#后面的数据  去除.html?jjj  | .htm?dkfkd  | .shtml?www
-        $url = preg_replace('/#.*$|\.(html|htm|shtml)\?.*$/', '', $url);
+        $url = preg_replace('/#.*$|\.(html|htm|shtml)\?.*$/i', '', $url);
 
-        //加入域名
         if (strpos($url, '/') === 0) { //不带域名的 绝对路径
-            $url = $this->domian . $url;
-        } elseif (!strpos($url, 'http') === 0) {  //既不是http开头也不是 / 开头  就表示是相对路径
-            $url = $this->curUrl . $url;
+            $url = $this->config->get('domain') . $url;
+        } elseif (strpos($url, 'http') !== 0) {  //既不是http开头也不是 / 开头  就表示是相对路径
+            $url = $this->config->curDirname . '/' . $url;
         }
 
-        //如果不是在指定域名下跳过
-        if ($this->config['domain']) {
-            if (strpos($url, $this->config['domain']) !== 0) {
-                return false;
-            }
+        //如果不是 指定域名跳过
+        if (stripos($url, $this->config->get('domain')) !== 0) {
+            return false;
         }
 
         //如果重复 跳过
         if (in_array($url, $this->worked)) {
             return false;
         }
+
         $this->saveWorked($url);
         $this->saveQueue($url);
 
@@ -62,7 +60,8 @@ class Queue extends Base {
     }
 
     public function out() {
-        return array_pop($this->queue);
+        $this->config->curUrl = array_pop($this->queue);
+        return $this->config->curUrl;
     }
 
     protected function saveWorked($url) {
@@ -71,6 +70,14 @@ class Queue extends Base {
 
     public function saveQueue($url) {
         $this->queue[] = $url;
+    }
+
+    public function getQueueData() {
+        return $this->queue;
+    }
+
+    public function getWorkedData() {
+        return $this->worked;
     }
 
 }

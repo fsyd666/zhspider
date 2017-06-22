@@ -8,14 +8,14 @@
 
 namespace zhspider\handle;
 
-abstract class HandleBase {
+abstract class BaseHandle {
 
     protected function createXpath($html) {
         $doc = new \DOMDocument();
-        $doc->loadHTML($html);
-        $xpath = new DOMXPath($doc);
+        @$doc->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES'));
+        $xpath = new \DOMXPath($doc);
         return $xpath;
     }
 
-    abstract public function getUrls($html);
+    abstract public function getUrls($html, $curUrl);
 }

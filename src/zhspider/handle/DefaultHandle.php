@@ -8,20 +8,22 @@
 
 namespace zhspider\handle;
 
-class Handle extends HandleBase {
+class DefaultHandle extends BaseHandle {
 
     /**
      * 获取下一个地址
      * @param string $html
      * @return array $urls
      */
-    public function getUrls($html) {
+    public function getUrls($html, $curUrl) {
+        if (!$curUrl) {  //没有URL 直接返回
+            return null;
+        }
         $nodeList = $this->createXpath($html)->query('//a/@href');
         $urls = array();
         foreach ($nodeList as $node) {
             $urls[] = $node->nodeValue;
         }
-        print_r($urls);
         return $urls;
     }
 
