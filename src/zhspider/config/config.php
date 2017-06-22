@@ -9,5 +9,6 @@ $config = array(
     ),
     'domain' => array(), //限制在某些域名下抓取 默认只抓取当前域名
     'handle' => 'Handle', //处理器必须继承  HandleBase 并且必须使用 zhspider\handle 命名空间
+    'run_url' => '', //初始地址 可以是数组或者字符串
 );
 return $config;

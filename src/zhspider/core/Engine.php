@@ -16,7 +16,10 @@ class Engine extends Base {
     protected $queue = null;
     protected $handle = null;
 
-    public function run($url) {
+    public function run() {
+
+        $url = $this->config['run_url'];
+
         $this->queue = new Queue();
         $this->queue->in($url);
         $this->handle = $this->createHandle();

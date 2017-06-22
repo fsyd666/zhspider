@@ -17,9 +17,9 @@ use zhspider\core\Engine;
 class Spider extends Base {
 
     //run
-    public function run($url) {
+    public function run() {
         $engine = new Engine();
-        $engine->run($url);
+        $engine->run();
     }
 
 }
