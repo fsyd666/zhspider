@@ -7,12 +7,13 @@
  */
 
 namespace zhspider\handle;
+use zhspider\core\Base;
 
-abstract class BaseHandle {
+abstract class BaseHandle extends Base{
 
-    protected function createXpath($html) {
+    protected function createXpath($html,$charset='utf-8') {
         $doc = new \DOMDocument();
-        @$doc->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES'));
+        @$doc->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES',$charset));
         $xpath = new \DOMXPath($doc);
         return $xpath;
     }

@@ -7,7 +7,9 @@
  */
 
 namespace zhspider\handle;
-
+/**
+ * 默认处理器
+ */
 class DefaultHandle extends BaseHandle {
 
     /**

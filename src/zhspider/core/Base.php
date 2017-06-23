@@ -24,8 +24,8 @@ class Base {
     }
 
     protected function log($message) {
-        $filename = '../logs/' . date('Y-m-d') . '.log';
-        file_put_contents($filename, date('H:i:s') . "\t" . $message . "\t" . $this->curUrl . "\n", FILE_APPEND);
+        $filename = __DIR__ . '/../logs/' . date('Y-m-d') . '.log';
+        file_put_contents($filename, date('H:i:s') . "\t" . $message . "\t" . Config::getInstance()->curUrl . "\n", FILE_APPEND);
     }
 
 }
