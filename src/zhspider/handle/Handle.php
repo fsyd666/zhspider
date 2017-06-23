@@ -27,15 +27,12 @@ class Handle extends Base {
      * @param string $html
      * @return array $urls
      */
-    public function getUrls($html, $curUrl) {
-        if (!$curUrl) {  //没有URL 直接返回
+    public function getUrls($html) {
+        if (!$this->config->curUrl) {  //没有URL 直接返回
             return null;
         }
-        $nodeList = $this->createXpath($html)->query('//a/@href');
-        $urls = array();
-        foreach ($nodeList as $node) {
-            $urls[] = $node->nodeValue;
-        }
+        $xpath = $this->createXpath($html, $this->config->get('charset'));
+        $urls = call_user_func($this->config->get('callback'), $html, $this->config->curUrl, $xpath);
         return $urls;
     }
 

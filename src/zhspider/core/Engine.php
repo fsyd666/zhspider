@@ -9,7 +9,7 @@
 namespace zhspider\core;
 
 use zhspider\http\Request;
-use zhspider\handle\DefaultHandle;
+use zhspider\handle\Handle;
 
 class Engine extends Base {
 
@@ -18,33 +18,35 @@ class Engine extends Base {
 
     public function run($config) {
         $this->queue = new Queue();
-        //设置配置文件 
+        //设置配置文件
         $this->config->setConfig($config);
+        //设置配置文件 
+        $this->validConfig();
         $this->queue->in($this->config->get('run_url'));
-        $this->handle = $this->createHandle();
+        $this->handle = new Handle();
         $this->start();
     }
 
     protected function start() {
         while ($url = $this->queue->out()) {  //取出一个地址
             $request = new Request();
-            $html = $request->get($url, $this->config->get('request')['header']);
+            $html = $request->get($url);
             //获取新的地址
             if (!$html) { //没有数据跳过
                 continue;
             }
-            $urls = $this->handle->getUrls($html, $this->config->curUrl);
+            $urls = $this->handle->getUrls($html);
             $this->queue->in($urls);
-            //file_put_contents('a.txt', implode("\n", $this->queue->getWorkedData()) . "\n", FILE_APPEND);
         }
     }
 
-    protected function createHandle() {
-        //未设置使用默认处理函数
-        if ($this->config->get('handle')) {
-            return new DefaultHandle();
-        } else {
-            return new DefaultHandle();
+    protected function validConfig() {
+        //必须设置run_url,callback;
+        if (!$this->config->get('run_url')) {
+            throw new \Exception('no set run_url');
+        }
+        if (!$this->config->get('callback')) {
+            throw new \Exception('no set callback');
         }
     }
 

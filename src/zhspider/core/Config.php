@@ -19,15 +19,15 @@ class Config {
     private static $_instance = null;
 
     private function __construct() {
-        $this->_config = require __DIR__ . '/../config/config.php';
-        if (!$this->_config['domain']) {
-            throw new \Exception('config no set domain', 500);
-        }
-        $this->_config['domain'] = rtrim($this->_config['domain'], '/');
-
-        if (!$this->_config['run_url']) {
-            throw new \Exception('no run url!', 500);
-        }
+        $this->_config = array(
+            'httpHeader' => array(
+                'User-Agent:Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36',
+            ),
+            'domain' => '', //必须设置限制在某些域名下抓取 不然碰到友情链接会抓取非常多数据 http://www.ygdy8.com/ 
+            'callback' => '', //回调函数
+            'run_url' => '', //初始地址 可以是数组或者字符串 http://www.ygdy8.com/html/gndy/china/index.html
+            'charset' => 'utf-8',
+        );
     }
 
     private function __clone() {
@@ -43,6 +43,12 @@ class Config {
 
     public function setConfig($config) {
         $this->_config = array_merge($this->_config, $config);
+        //根据地址设置domain
+        if (!$this->_config['domain'] && $this->_config['run_url']) {
+            $this->_config['domain'] = is_array($this->_config['run_url']) ?
+                    $this->getDomain($this->_config['run_url'][0]) :
+                    $this->getDomain($this->_config['run_url']);
+        }
     }
 
     public function __get($name) {
@@ -67,6 +73,14 @@ class Config {
             self::$_instance = new self();
         }
         return self::$_instance;
+    }
+
+    protected function getDomain($url) {
+        $info = parse_url($url);
+        if (!$info['scheme'] || !$info['host']) {
+            throw new \Exception('run_url is valid');
+        }
+        return $info['scheme'] . '://' . $info['host'];
     }
 
 }
