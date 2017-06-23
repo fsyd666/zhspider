@@ -41,6 +41,10 @@ class Config {
         return null;
     }
 
+    public function setConfig($config) {
+        $this->_config = array_merge($this->_config, $config);
+    }
+
     public function __get($name) {
         $name = '_' . $name;
         if (isset($this->$name)) {

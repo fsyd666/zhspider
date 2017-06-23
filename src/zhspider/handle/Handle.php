@@ -7,10 +7,20 @@
  */
 
 namespace zhspider\handle;
+
+use zhspider\core\Base;
+
 /**
  * 默认处理器
  */
-class DefaultHandle extends BaseHandle {
+class Handle extends Base {
+
+    protected function createXpath($html, $charset = 'utf-8') {
+        $doc = new \DOMDocument();
+        @$doc->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', $charset));
+        $xpath = new \DOMXPath($doc);
+        return $xpath;
+    }
 
     /**
      * 获取下一个地址

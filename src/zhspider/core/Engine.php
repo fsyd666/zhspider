@@ -9,15 +9,17 @@
 namespace zhspider\core;
 
 use zhspider\http\Request;
-use zhspider\handle\Handle;
+use zhspider\handle\DefaultHandle;
 
 class Engine extends Base {
 
     protected $queue = null;  //队列对象
     protected $handle = null; //处理器对象
 
-    public function run() {
+    public function run($config) {
         $this->queue = new Queue();
+        //设置配置文件 
+        $this->config->setConfig($config);
         $this->queue->in($this->config->get('run_url'));
         $this->handle = $this->createHandle();
         $this->start();
@@ -38,11 +40,11 @@ class Engine extends Base {
     }
 
     protected function createHandle() {
+        //未设置使用默认处理函数
         if ($this->config->get('handle')) {
-            $class = 'zhspider\\handle\\' . $this->config->get('handle');
-            return new $class();
+            return new DefaultHandle();
         } else {
-            return new Handle();
+            return new DefaultHandle();
         }
     }
 

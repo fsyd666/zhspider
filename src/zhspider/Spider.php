@@ -12,12 +12,15 @@ use zhspider\core\Engine;
 
 class Spider {
 
-    //run
-    public function run() {
+    /**
+     * 
+     * @param array $config  配置文件信息
+     */
+    public function run($config = null) {
         ini_set('max_execution_time', '0');
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
         $engine = new Engine();
-        $engine->run();
+        $engine->run($config);
     }
 
 }
