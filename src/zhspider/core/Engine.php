@@ -38,6 +38,7 @@ class Engine extends Base {
             $urls = $this->handle->getUrls($html);
             $this->queue->in($urls);
         }
+        echo 'OK , worked count :' . count($this->queue->getWorkedData());
     }
 
     protected function validConfig() {
